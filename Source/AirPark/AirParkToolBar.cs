@@ -19,7 +19,10 @@
 using UnityEngine;
 using KSP.UI.Screens;
 using KSPe.Annotations;
+
 using Toolbar = KSPe.UI.Toolbar;
+using GUI = KSPe.UI.GUI;
+using GUILayout = KSPe.UI.GUILayout;
 
 namespace AirPark
 {
