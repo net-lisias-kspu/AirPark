@@ -41,6 +41,7 @@
     </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="UI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

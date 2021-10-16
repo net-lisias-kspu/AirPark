@@ -18,12 +18,26 @@
 */
 using UnityEngine;
 using KSP.UI.Screens;
+using KSPe.Annotations;
+using Toolbar = KSPe.UI.Toolbar;
 
 namespace AirPark
 {
     using Asset = KSPe.IO.Asset<Startup>;
-    
-    [KSPAddon(KSPAddon.Startup.Flight, false)]
+
+	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	public class ToolbarController : MonoBehaviour
+	{
+		internal static KSPe.UI.Toolbar.Toolbar Instance => KSPe.UI.Toolbar.Controller.Instance.Get<ToolbarController>();
+
+		[UsedImplicitly]
+		private void Start()
+		{
+			KSPe.UI.Toolbar.Controller.Instance.Register<ToolbarController>(Version.FriendlyName);
+		}
+	}
+
+	[KSPAddon(KSPAddon.Startup.Flight, false)]
     class AirParkToolbar : MonoBehaviour
     {
        
@@ -139,8 +153,17 @@ namespace AirPark
             {
                 if (!hasAddedButton)
                 {
-                    Texture buttonTexture = Asset.Texture2D.LoadFromFile("Icon", "AirPark");
-                    ApplicationLauncher.Instance.AddModApplication(ShowToolbarGUI, HideToolbarGUI, Dummy, Dummy, Dummy, Dummy, ApplicationLauncher.AppScenes.FLIGHT, buttonTexture);
+                   Toolbar.Button button = Toolbar.Button.Create(this
+                            , ApplicationLauncher.AppScenes.FLIGHT
+                            , UI.icon.button.on_36, UI.icon.button.off_36
+                            , UI.icon.button.on_24, UI.icon.button.off_24
+                        );
+                    button.Toolbar
+                        .Add(Toolbar.Button.ToolbarEvents.Kind.Active,
+                            new Toolbar.Button.Event(this.ShowToolbarGUI, this.HideToolbarGUI)
+                        );
+                    ;
+                    ToolbarController.Instance.Add(button);
                     hasAddedButton = true;
                 }
             }
@@ -155,9 +178,6 @@ namespace AirPark
         {
             AirParkToolbar.toolbarGuiEnabled = false;
         }
-
-        void Dummy()
-        { }
 
         public static bool MouseIsInRect(Rect rect)
         {
