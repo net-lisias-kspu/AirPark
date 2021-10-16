@@ -26,9 +26,9 @@ namespace AirPark
 		{
 			internal static class button
 			{ 
-				internal static readonly Texture2D on_36 = Asset.Texture2D.LoadFromFile("Icon", "AirParkOn");
+				internal static readonly Texture2D on_36 = Asset.Texture2D.LoadFromFile("Icon", "AirParkON");
 				internal static readonly Texture2D off_36 = Asset.Texture2D.LoadFromFile("Icon", "AirPark");
-				internal static readonly Texture2D on_24 = Asset.Texture2D.LoadFromFile("Icon", "AirParkOn_24");
+				internal static readonly Texture2D on_24 = Asset.Texture2D.LoadFromFile("Icon", "AirParkON_24");
 				internal static readonly Texture2D off_24 = Asset.Texture2D.LoadFromFile("Icon", "AirPark_24");
 			}
 		}
