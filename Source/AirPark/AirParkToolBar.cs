@@ -61,7 +61,8 @@ namespace AirPark
             if (!v.isActiveVessel) return;
         }
 
-        void Start()
+        [UsedImplicitly]
+        private void Start()
         {
             toolbarPosition = new Vector2(Screen.width - toolbarWidth - 80, 50);
             toolbarRect = new Rect(toolbarPosition.x, toolbarPosition.y + 100, toolbarWidth, toolbarHeight);
@@ -72,7 +73,8 @@ namespace AirPark
             GameEvents.onVesselChange.Add(VesselChange);
         }
 
-        void OnGUI()
+        [UsedImplicitly]
+        private void OnGUI()
         {
             if (toolbarGuiEnabled) //&& AirParkPM.instance)
             {
