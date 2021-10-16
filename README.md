@@ -36,7 +36,7 @@ This work is licensed under the [GPL 2.0](https://www.gnu.org/licenses/gpl-2.0.t
 	- You recognize and respect any trademarks
 	- You don't impersonate the authors, neither redistribute a derivative that could be misrepresented as theirs.
 	- You credit the author and republish the copyright notices on your works where the code is used.
-	- You relicense (and fully comply) your works using GPL 2.0 (or later)
+	- You relicense (and fully comply) your works using GPL 2.0
 	- You don't mix your work with GPL incompatible works.
 
 See [NOTICE](./NOTICE) for further copyright and trademarks notices.
@@ -44,12 +44,12 @@ See [NOTICE](./NOTICE) for further copyright and trademarks notices.
 
 ## UPSTREAM
 
+* [SmellyBootRash](https://forum.kerbalspaceprogram.com/index.php?/profile/152610-smelly/) (Root)
+	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/123669-104-airpark/&tab=comments#comment-2242372)
+	+ [GitHub](https://github.com/SmellyBootRash/AirPark)
+* [dunclaw](https://forum.kerbalspaceprogram.com/index.php?/profile/151301-dunclaw/) (Parent)
+	+ [GitHub](https://github.com/dunclaw/AirPark)
 * [gomker](https://forum.kerbalspaceprogram.com/index.php?/profile/141269-gomker/) (Current Maintainer)
 	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/162504-13-airpark-continued/)
 	+ [GitHub](https://github.com/gomker/AirPark)
 	+ [SpaceDock](https://spacedock.info/mod/936/AirPark%20Continued)
-* [dunclaw](https://forum.kerbalspaceprogram.com/index.php?/profile/151301-dunclaw/) (Parent)
-	+ [GitHub](https://github.com/dunclaw/AirPark)
-* [SmellyBootRash](https://forum.kerbalspaceprogram.com/index.php?/profile/152610-smelly/) (Root)
-	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/123669-104-airpark/&tab=comments#comment-2242372)
-	+ [GitHub](https://github.com/SmellyBootRash/AirPark)
