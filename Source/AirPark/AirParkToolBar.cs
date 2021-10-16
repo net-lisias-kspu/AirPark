@@ -70,7 +70,13 @@ namespace AirPark
 
             AddToolbarButton();
 
-            GameEvents.onVesselChange.Add(VesselChange);
+            GameEvents.onVesselChange.Add(this.VesselChange);
+        }
+
+        [UsedImplicitly]
+        private void OnDestroy()
+        {
+            GameEvents.onVesselChange.Remove(this.VesselChange);
         }
 
         [UsedImplicitly]
