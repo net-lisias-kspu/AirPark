@@ -23,6 +23,7 @@ using KSPe.Annotations;
 using Toolbar = KSPe.UI.Toolbar;
 using GUI = KSPe.UI.GUI;
 using GUILayout = KSPe.UI.GUILayout;
+using System.Collections.Generic;
 
 namespace AirPark
 {
@@ -44,8 +45,11 @@ namespace AirPark
     class AirParkToolbar : MonoBehaviour
     {
        
-        public static bool hasAddedButton = false;
+        public static bool hasAddedButton => null != button;
         public static bool toolbarGuiEnabled = false;
+
+        private static AirPark airParkInstance = null;
+        private static AirPark AirParkInstance => airParkInstance ?? (airParkInstance = AirPark.Instance);
 
         Rect toolbarRect;
         float toolbarWidth = 280;
@@ -58,6 +62,7 @@ namespace AirPark
         
         void VesselChange(Vessel v)
         {
+            airParkInstance = null;
             if (!v.isActiveVessel) return;
         }
 
@@ -86,6 +91,7 @@ namespace AirPark
             {
                 GUI.Window(999666, toolbarRect, ToolbarWindow, "AirPark", HighLogic.Skin.window);
             }
+            parkingState.State = AirParkInstance.isActive && AirPark.Parked;
         }
 
         void ToolbarWindow(int windowID)
@@ -171,24 +177,35 @@ namespace AirPark
             GUI.Label(LineRect(ref line), label, HighLogic.Skin.label);
         }
 
+        private static Toolbar.States parkingState = null;
+        private static Toolbar.Button button = null;
         void AddToolbarButton()
         {
             if (HighLogic.LoadedSceneIsFlight)
             {
                 if (!hasAddedButton)
                 {
-                   Toolbar.Button button = Toolbar.Button.Create(this
+                    button = Toolbar.Button.Create(this
                             , ApplicationLauncher.AppScenes.FLIGHT
-                            , UI.icon.button.on_36, UI.icon.button.off_36
-                            , UI.icon.button.on_24, UI.icon.button.off_24
-                        );
+                            , UI.icon.button.off_36
+                            , UI.icon.button.off_24
+                        )
+                    ;
+
+                    parkingState = button.States.Create<bool>(
+                        new Dictionary<object, Toolbar.States.Data> {
+                            { false, Toolbar.States.Data.Create(UI.icon.button.off_36, UI.icon.button.off_24) }
+                            ,{ true, Toolbar.States.Data.Create(UI.icon.button.on_36, UI.icon.button.on_24) }
+                        })
+                    ;
+
                     button.Toolbar
                         .Add(Toolbar.Button.ToolbarEvents.Kind.Active,
                             new Toolbar.Button.Event(this.ShowToolbarGUI, this.HideToolbarGUI)
                         );
                     ;
+
                     ToolbarController.Instance.Add(button);
-                    hasAddedButton = true;
                 }
             }
         }
