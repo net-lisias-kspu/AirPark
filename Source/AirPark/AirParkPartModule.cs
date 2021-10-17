@@ -27,10 +27,17 @@ namespace AirPark
         public static AirPark Instance => instance;
 
         #region Fields / Globals
+
+        // static KSPFiels are pretty hackish, but it works...
+
         [KSPField(isPersistant = true, guiActive = true, guiName = "AirParked")]
         public static Boolean Parked;
+
         [KSPField(isPersistant = true, guiActive = true, guiName = "Auto UnPark")]
         public static Boolean autoPark;
+
+        [KSPField(isPersistant = true, guiActive = true, guiName = "Allow Suborbital Parking")]
+        public static Boolean isSuborbitalParkAllowed;
 
         //Velocity and Postion
         [KSPField(isPersistant = true, guiActive = false)]
@@ -85,7 +92,7 @@ namespace AirPark
             if (vessel == null | !vessel.isActiveVessel) { return; }
 
             // cannot Park in orbit or sub-orbit
-            if (vessel.situation != Vessel.Situations.SUB_ORBITAL && vessel.situation != Vessel.Situations.ORBITING)
+            if (this.isParkingAllowed)
             {
                 if (!Parked)
                 {
@@ -110,6 +117,12 @@ namespace AirPark
         public void ToggleAutoPark()
         {
             autoPark = !autoPark;
+        }
+
+        [KSPEvent(guiActive = true, guiName = "Toggle Suborbital Park")] // Allows suborbital parking or not
+        public void ToggleSubOrbitalPark()
+        {
+            isSuborbitalParkAllowed = !isSuborbitalParkAllowed;
         }
         #endregion
 
@@ -159,8 +172,8 @@ namespace AirPark
 
             vesselSituation = vessel.situation.ToString();
 
-            #region can't Park if we're orbitingParkPosition
-            if (vessel.situation == Vessel.Situations.SUB_ORBITAL || vessel.situation == Vessel.Situations.ORBITING)
+            #region can't Park if we're orbiting (unless parking in suborbital is allowed)
+            if (AirParkToolbar.toolbarGuiEnabled && !this.isParkingAllowed) // Prevents the pesky message from being displayed without the GUI
             {
                 autoPark = false;
                 Parked = false;
@@ -303,6 +316,9 @@ namespace AirPark
             vessel.IgnoreGForces(240);
             vessel.orbitDriver.pos = ParkPosition;
         }
+
+        private bool isParkingAllowed => (vessel.situation != Vessel.Situations.ORBITING && (isSuborbitalParkAllowed || vessel.situation != Vessel.Situations.SUB_ORBITAL));
+
         #endregion
     }
 }

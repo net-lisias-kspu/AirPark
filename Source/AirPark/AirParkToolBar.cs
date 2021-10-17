@@ -115,26 +115,39 @@ namespace AirPark
                 }
 
                 line += 0.2f;
-                Rect spawnVesselRect = LineRect(ref line);
-                svRectScreenSpace = new Rect(spawnVesselRect);
-                svRectScreenSpace.x += toolbarRect.x;
-                svRectScreenSpace.y += toolbarRect.y;
-
-                if (!AirPark.autoPark)
-                {
-                    if (GUI.Button(spawnVesselRect, "Auto-Park OFF", HighLogic.Skin.button))
+                { 
+                    Rect spawnVesselRect = LineRect(ref line);
+                    svRectScreenSpace = new Rect(spawnVesselRect);
+                    svRectScreenSpace.x += toolbarRect.x;
+                    svRectScreenSpace.y += toolbarRect.y;
+                    if (!AirPark.autoPark)
                     {
-                        AirPark.Instance.ToggleAutoPark();
+                        if (GUI.Button(spawnVesselRect, "Auto-Park OFF", HighLogic.Skin.button))
+                            AirPark.Instance.ToggleAutoPark();
                     }
-
+                    else
+                    {
+                        if (GUI.Button(spawnVesselRect, "Auto-Park ON", HighLogic.Skin.button))
+                            AirPark.Instance.ToggleAutoPark();
+                    }
                 }
-                else
-                {
-                    if (GUI.Button(spawnVesselRect, "Auto-Park ON", HighLogic.Skin.button))
-                    {
-                        AirPark.Instance.ToggleAutoPark();
-                    }
 
+                {
+                    line += 0.2f;
+                    Rect spawnVesselRect = LineRect(ref line);
+                    svRectScreenSpace = new Rect(spawnVesselRect);
+                    svRectScreenSpace.x += toolbarRect.x;
+                    svRectScreenSpace.y += toolbarRect.y;
+                    if (!AirPark.isSuborbitalParkAllowed)
+                    {
+                        if (GUI.Button(spawnVesselRect, "Sub Orbital Park OFF", HighLogic.Skin.button))
+                            AirPark.Instance.ToggleSubOrbitalPark();
+                    }
+                    else
+                    {
+                        if (GUI.Button(spawnVesselRect, "Sub Orbital Park ON", HighLogic.Skin.button))
+                            AirPark.Instance.ToggleSubOrbitalPark();
+                    }
                 }
             }
             else
