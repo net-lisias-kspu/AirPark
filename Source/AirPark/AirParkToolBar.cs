@@ -62,8 +62,9 @@ namespace AirPark
         
         void VesselChange(Vessel v)
         {
-            airParkInstance = null;
             if (!v.isActiveVessel) return;
+            airParkInstance = AirPark.Instance;
+            this.enabled = (null != airParkInstance);
         }
 
         [UsedImplicitly]
@@ -87,6 +88,8 @@ namespace AirPark
         [UsedImplicitly]
         private void OnGUI()
         {
+            if (null == airParkInstance) return; // Should not be necessary (see OnVesselChange), but better safe than sorry.
+
             if (toolbarGuiEnabled) //&& AirParkPM.instance)
             {
                 GUI.Window(999666, toolbarRect, ToolbarWindow, "AirPark", HighLogic.Skin.window);
