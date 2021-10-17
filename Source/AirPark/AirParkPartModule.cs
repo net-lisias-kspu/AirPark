@@ -23,8 +23,15 @@ namespace AirPark
 {
     public class AirPark : PartModule
     {
-        static AirPark instance;
-        public static AirPark Instance => instance;
+		public static AirPark Instance
+		{
+			get
+			{
+				foreach (Part p in FlightGlobals.ActiveVessel.Parts) if (p.Modules.Contains<AirPark>())
+					return p.Modules.GetModule<AirPark>();
+				return null; // This is going to get interesting...
+			}
+		}
 
         #region Fields / Globals
 
@@ -133,8 +140,6 @@ namespace AirPark
             {
                 part.force_activate();
                 ParkPosition = vessel.transform.position;
-
-                instance = this;
             }
         }
         public override void OnSave(ConfigNode node)
@@ -214,10 +219,6 @@ namespace AirPark
                 ParkVessel();
             }
 
-        }
-        public void OnDestroy()
-        {
-            instance = null;       
         }
 
         #endregion
