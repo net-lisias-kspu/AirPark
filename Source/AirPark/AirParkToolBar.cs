@@ -95,7 +95,7 @@ namespace AirPark
                 GUI.Window(999666, toolbarRect, ToolbarWindow, "AirPark", HighLogic.Skin.window);
             }
 
-            parkingState.State = AirParkInstance.isActive && AirParkInstance.Parked;
+            parkingState.State = AirParkInstance.Parked;
         }
 
         void ToolbarWindow(int windowID)
