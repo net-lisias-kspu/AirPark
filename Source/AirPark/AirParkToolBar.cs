@@ -191,8 +191,8 @@ namespace AirPark
                 {
                     button = Toolbar.Button.Create(this
                             , ApplicationLauncher.AppScenes.FLIGHT
-                            , UI.icon.button.off_36
-                            , UI.icon.button.off_24
+                            , UI.icon.button.off_36, UI.icon.button.disabled_36
+                            , UI.icon.button.off_24, UI.icon.button.disabled_24
                         )
                     ;
 
@@ -217,7 +217,7 @@ namespace AirPark
         private void updateVesselData()
         {
             airParkInstance = AirPark.Instance;
-            this.enabled = (null != airParkInstance);
+            button.Enabled = this.enabled = (null != airParkInstance);
             Log.dbg("Tollbar Enabled == {0}", this.enabled);
         }
 
