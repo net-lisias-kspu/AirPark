@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AirPark Unofficial")]
-[assembly: AssemblyDescription("Parking vessels in KSP")]
+[assembly: AssemblyTitle("AirPark /L Unofficial")]
+[assembly: AssemblyDescription("Parking vessels in unusual places and situations on KSP")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AirPark")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany(AirPark.LegalMamboJambo.Company)]
+[assembly: AssemblyProduct(AirPark.LegalMamboJambo.Product)]
+[assembly: AssemblyCopyright(AirPark.LegalMamboJambo.Copyright)]
+[assembly: AssemblyTrademark(AirPark.LegalMamboJambo.Trademark)]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -35,3 +35,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion(AirPark.Version.Number)]
 [assembly: AssemblyFileVersion(AirPark.Version.Number)]
 [assembly: KSPAssembly("AirPark", AirPark.Version.major, AirPark.Version.minor)]
+
+[assembly: KSPAssemblyDependency("KSPe", 2, 4)]
+[assembly: KSPAssemblyDependency("KSPe.UI", 2, 4)]
