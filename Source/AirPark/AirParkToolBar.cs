@@ -62,9 +62,9 @@ namespace AirPark
         
         void VesselChange(Vessel v)
         {
+            Log.dbg("OnVesselChange {0}", v.vesselName);
             if (!v.isActiveVessel) return;
-            airParkInstance = AirPark.Instance;
-            this.enabled = (null != airParkInstance);
+            this.updateVesselData();
         }
 
         [UsedImplicitly]
@@ -74,8 +74,8 @@ namespace AirPark
             toolbarRect = new Rect(toolbarPosition.x, toolbarPosition.y + 100, toolbarWidth, toolbarHeight);
             contentWidth = toolbarWidth - (2 * toolbarMargin);
 
-            AddToolbarButton();
-
+            this.AddToolbarButton();
+            this.updateVesselData();
             GameEvents.onVesselChange.Add(this.VesselChange);
         }
 
@@ -94,7 +94,8 @@ namespace AirPark
             {
                 GUI.Window(999666, toolbarRect, ToolbarWindow, "AirPark", HighLogic.Skin.window);
             }
-            parkingState.State = AirParkInstance.isActive && AirPark.Parked;
+
+            parkingState.State = AirParkInstance.isActive && AirParkInstance.Parked;
         }
 
         void ToolbarWindow(int windowID)
@@ -106,7 +107,7 @@ namespace AirPark
 
             if (AirPark.Instance)
             {
-                if (!AirPark.Parked)
+                if (!AirParkInstance.Parked)
                 {
                     if (GUI.Button(LineRect(ref line, 1.5f), "Park Vessel", HighLogic.Skin.button))
                     {
@@ -213,22 +214,29 @@ namespace AirPark
             }
         }
 
-        public void ShowToolbarGUI()
+        private void updateVesselData()
+        {
+            airParkInstance = AirPark.Instance;
+            this.enabled = (null != airParkInstance);
+            Log.dbg("Tollbar Enabled == {0}", this.enabled);
+        }
+
+        private void ShowToolbarGUI()
         {
             AirParkToolbar.toolbarGuiEnabled = true;
         }
 
-        public void HideToolbarGUI()
+        private void HideToolbarGUI()
         {
             AirParkToolbar.toolbarGuiEnabled = false;
         }
 
-        public static bool MouseIsInRect(Rect rect)
+        private static bool MouseIsInRect(Rect rect)
         {
             return rect.Contains(MouseGUIPos());
         }
 
-        public static Vector2 MouseGUIPos()
+        private static Vector2 MouseGUIPos()
         {
             return new Vector3(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 0);
         }

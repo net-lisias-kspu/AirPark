@@ -17,6 +17,7 @@
 
 */
 using System;
+using KSPe.Annotations;
 using UnityEngine;
 
 namespace AirPark
@@ -33,38 +34,39 @@ namespace AirPark
 			}
 		}
 
+        private static readonly Vector3 ZERO = new Vector3(0f, 0f, 0f);
+
         #region Fields / Globals
 
-        // static KSPFiels are pretty hackish, but it works...
-
         [KSPField(isPersistant = true, guiActive = true, guiName = "AirParked")]
-        public static Boolean Parked;
+        public bool Parked;
 
+    // static KSPFiels are pretty hackish, but it works...
         [KSPField(isPersistant = true, guiActive = true, guiName = "Auto UnPark")]
-        public static Boolean autoPark;
+        public static bool autoPark;
 
         [KSPField(isPersistant = true, guiActive = true, guiName = "Allow Suborbital Parking")]
-        public static Boolean isSuborbitalParkAllowed;
+        public static bool isSuborbitalParkAllowed;
+    // hackish
 
         //Velocity and Postion
         [KSPField(isPersistant = true, guiActive = false)]
-        //private Vector3 ParkPosition = new Vector3(0f, 0f, 0f);
         private Vector3 ParkPosition;
 
         [KSPField(isPersistant = true, guiActive = false)]
-        Vector3 ParkVelocity = new Vector3(0f, 0f, 0f);
-        private static Vector3 zeroVector = new Vector3(0f, 0f, 0f);
+        Vector3 ParkVelocity = ZERO;
+
         [KSPField(isPersistant = true, guiActive = false)]
-        private Vector3 ParkAcceleration = new Vector3(0f, 0f, 0f);
+        private Vector3 ParkAcceleration = ZERO;
+
         [KSPField(isPersistant = true, guiActive = false)]
-        private Vector3 ParkAngularVelocity = new Vector3(0f, 0f, 0f);
+        private Vector3 ParkAngularVelocity = ZERO;
 
         //Vessel State
-        [KSPField(isPersistant = true, guiActive = true)] //flip to false guiactive on release
-        Vessel.Situations previousState;
         [KSPField(isPersistant = true, guiActive = false)]
+        Vessel.Situations previousState;
 
-        //have you ever clicked "AirParked"? Rember to keep interesting things from happening
+        [KSPField(isPersistant = true, guiActive = false)]
         public bool isActive = false;
 
         #region Debug Fields
@@ -80,6 +82,7 @@ namespace AirPark
         #endregion
 
         #region Toggles
+
         [KSPEvent(guiActive = true, guiName = "Toggle Park")]
         public void TogglePark_Event()
         {
@@ -120,28 +123,23 @@ namespace AirPark
         {
             //if (!FlightGlobals.ActiveVessel || !(vessel.id == FlightGlobals.ActiveVessel.id)) { return; }
             //if (vessel == null || vessel == FlightGlobals.ActiveVessel) { return; }
-            if (vessel == null | !vessel.isActiveVessel) { return; }
+            if (vessel == null || !vessel.isActiveVessel) { return; }
 
             // cannot Park in orbit or sub-orbit
             if (this.isParkingAllowed)
             {
                 if (!Parked)
                 {
-                    ParkPosition = GetVesselPostion();
-
-                    //we only want to remember the initial velocity, not subseqent updates by onFixedUpdate()
-                    ParkVelocity = vessel.GetSrfVelocity();
-                    ParkAcceleration = vessel.acceleration;
-                    ParkAngularVelocity = vessel.angularVelocity;
-
+                    isActive = true;
+                    this.RefreshParkData();
                     ParkVessel();
                 }
                 else
                 {
                     RestoreVesselState();
                 }
-                isActive = true;
             }
+            Log.dbg("Parking for vessel {0} is now {1}", this.part.vessel.vesselName, this.Parked);
         }
 
         [KSPEvent(guiActive = true, guiName = "Toggle Auto UnPark")] //auto park on will awake the vessel and set Parked = false if closer than 1.5 KM and inactive
@@ -160,69 +158,62 @@ namespace AirPark
         #region GameEvents
         public override void OnStart(StartState state)
         {
+            this.enabled = HighLogic.LoadedSceneIsFlight && null != this.vessel;
             if (state != StartState.Editor && vessel != null)
             {
                 part.force_activate();
-                ParkPosition = vessel.transform.position;
+                if (this.Parked) setVesselPosition();
             }
         }
+
         public override void OnSave(ConfigNode node)
         {
+            if (this.Parked) this.RefreshParkData();
             base.OnSave(node);
-            if (vessel != null)
-            {
-
-                ParkPosition = GetVesselPostion();
-            }
-
         }
+
         public override void OnLoad(ConfigNode node)
         {
             base.OnLoad(node);
-            if (vessel != null)
-            {
-                //ParkPosition = vessel.GetWorldPos3D(); 
-                //ParkPosition = vessel.transform.position;
-                //ParkVelocity = vessel.GetSrfVelocity(); 
-                //ParkAcceleration = vessel.acceleration;
-                //ParkAngularVelocity = vessel.angularVelocity;   
-            }
+            if (this.Parked) this.setVesselStill();
         }
-        public void FixedUpdate()
-        {
-            //if (vessel == null || vessel == FlightGlobals.ActiveVessel) { return; }
-            //try
-            //{
-            if (!HighLogic.LoadedSceneIsFlight) { return; }
-            if (vessel == null | !vessel.isActiveVessel) { return; }
-            //}
-            //catch (Exception e)
-            //{ }
 
-            vesselSituation = vessel.situation.ToString();
+        [UsedImplicitly]
+        private void Update()
+        {
+            if (null == this.vessel) return;
 
             #region can't Park if we're orbiting (unless parking in suborbital is allowed)
-            if (AirParkToolbar.toolbarGuiEnabled && !this.isParkingAllowed) // Prevents the pesky message from being displayed without the GUI
+            if (!this.isParkingAllowed)
             {
-                autoPark = false;
                 Parked = false;
-                ScreenMessages.PostScreenMessage("Cannot Park While Sub-Orbital or Orbital", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                if (AirParkToolbar.toolbarGuiEnabled) // Prevents the pesky message from being displayed without the GUI
+                    ScreenMessages.PostScreenMessage("Cannot Park While Sub-Orbital or Orbital", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                return;
             }
             #endregion
+        }
+
+        [UsedImplicitly]
+        private void FixedUpdate()
+        {
+            vesselSituation = vessel.situation.ToString();
 
             #region If we are the Inactive Vessel and AutoPark is set
-            if (!vessel.isActiveVessel & autoPark)
+            if (autoPark && !vessel.isActiveVessel)
             {
                 //ParkPosition = vessel.GetWorldPos3D();
                 // if we're less than 1.5km from the active vessel and Parked, then wake up
                 if ((vessel.GetWorldPos3D() - FlightGlobals.ActiveVessel.GetWorldPos3D()).magnitude < 1500.0f & Parked)
                 {
+                    Log.dbg("AutoPark kicking in. {0} is near 1.5km from active vessel.", this.vessel.vesselName);
                     vessel.GoOffRails();
                     RestoreVesselState();
                 }
                 // if we're farther than 2km, auto Park if needed
-                if ((vessel.GetWorldPos3D() - FlightGlobals.ActiveVessel.GetWorldPos3D()).magnitude > 2000.0f & Parked == false)
+                if (!this.Parked && (vessel.GetWorldPos3D() - FlightGlobals.ActiveVessel.GetWorldPos3D()).magnitude > 2000.0f)
                 {
+                    Log.dbg("AutoPark kicking in. {0} is far than 2km from active vessel.", this.vessel.vesselName);
                     ParkVessel();
                 }
             }
@@ -237,12 +228,7 @@ namespace AirPark
             //}
             #endregion
 
-            //If Parked is True, Park the Vessel
-            if (Parked)
-            {
-                ParkVessel();
-            }
-
+            if (this.Parked) this.setVesselStill();
         }
 
         #endregion
@@ -258,7 +244,8 @@ namespace AirPark
 
         private void RestoreVesselState()
         {
-            if (isActive == false) { return; } //we only want to restore the state if you have parked somewhere intentionally
+            if (!this.isActive) return;          // we only want to restore the state if you have parked somewhere intentionally
+
             vessel.situation = previousState;
             if (vessel.situation != Vessel.Situations.LANDED) { vessel.Landed = false; }
             if (Parked) { Parked = false; }
@@ -266,11 +253,11 @@ namespace AirPark
             setVesselStill();
 
             //Restore Velocity and Accleration
-            vessel.IgnoreGForces(240);
-            vessel.SetWorldVelocity(ParkVelocity);
-            vessel.acceleration = ParkAcceleration;
-            vessel.angularVelocity = ParkAngularVelocity;
-
+            this.vessel.IgnoreGForces(240);
+            this.vessel.SetWorldVelocity(this.ParkVelocity);
+            this.vessel.acceleration = this.ParkAcceleration;
+            this.vessel.angularVelocity = this.ParkAngularVelocity;
+            this.vessel.orbitDriver.pos = this.ParkPosition;
         }
 
         private void ParkVessel()
@@ -285,64 +272,50 @@ namespace AirPark
 
         private void setVesselStill()
         {
-            vessel.IgnoreGForces(240);
-            vessel.SetWorldVelocity(zeroVector);
-            vessel.acceleration = zeroVector;
-            vessel.angularVelocity = zeroVector;
-            vessel.geeForce = 0.0;
-            setVesselPosition();
-
+            this.vessel.IgnoreGForces(240);
+            this.vessel.SetWorldVelocity(ZERO);
+            this.vessel.acceleration = ZERO;
+            this.vessel.angularVelocity = ZERO;
+            this.vessel.geeForce = 0.0;
+            this.setVesselPosition();
         }
         #endregion
 
-        #region Postion
-        //Code Adapted from Hyperedit landing functions 
-        //https://github.com/Ezriilc/HyperEdit
+        #region Position
+        // Inspired by Hyperedit landing functions 
+        // https://github.com/Ezriilc/HyperEdit
 
-        public CelestialBody Body { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double Altitude { get; set; }
-        public double alt;
-        public Vector3d teleportPosition;
-
-        public void SetAltitudeToCurrent()
+        private Vector3d GetVesselPosition()
         {
-            var pqs = Body.pqsController;
-            if (pqs == null)
-            {
-                Destroy(this);
-                return;
-            }
-            var alt = pqs.GetSurfaceHeight(QuaternionD.AngleAxis(Longitude, Vector3d.down) * QuaternionD.AngleAxis(Latitude, Vector3d.forward) * Vector3d.right) - pqs.radius;
-            //alt = Math.Max(alt, 0); // No need for underwater check, allow park subs
-            Altitude = GetComponent<Vessel>().altitude - alt;
-        }
+            PQS pqs = vessel.mainBody.pqsController;
+            if (null == pqs) return ZERO;
 
-        private Vector3d GetVesselPostion()
-        {
-            var pqs = vessel.mainBody.pqsController;
-            if (pqs == null)
-            {
-                Destroy(this);
-                return zeroVector;
-            }
-
-            alt = pqs.GetSurfaceHeight(vessel.mainBody.GetRelSurfaceNVector(Latitude, Longitude)) - vessel.mainBody.Radius;
+            double alt = pqs.GetSurfaceHeight(vessel.mainBody.GetRelSurfaceNVector(0, 0)) - vessel.mainBody.Radius;
             alt = Math.Max(alt, 0); // Underwater!
 
-            teleportPosition = vessel.mainBody.GetRelSurfacePosition(Latitude, Longitude, alt + Altitude);
+            return vessel.mainBody.GetRelSurfacePosition(0, 0, alt);
+        }
 
-            return teleportPosition;
+        private void RefreshParkData()
+        {
+            //this.ParkPosition = this.GetVesselPosition();
+            //this.ParkPosition = this.vessel.GetWorldPos3D();
+            this.ParkPosition = this.vessel.transform.position;
+            //this.ParkPosition = this.vessel.orbitDriver.pos;
+
+            //we only want to remember the initial velocity, not subseqent updates by onFixedUpdate()
+            this.ParkVelocity = this.vessel.GetSrfVelocity();
+            this.ParkAcceleration = this.vessel.acceleration;
+            this.ParkAngularVelocity = this.vessel.angularVelocity;
         }
 
         private void setVesselPosition()
         {
-            vessel.IgnoreGForces(240);
-            vessel.orbitDriver.pos = ParkPosition;
+            this.vessel.IgnoreGForces(240);
+            this.vessel.orbitDriver.pos = this.ParkPosition;
         }
 
-        private bool isParkingAllowed => (vessel.situation != Vessel.Situations.ORBITING && (isSuborbitalParkAllowed || vessel.situation != Vessel.Situations.SUB_ORBITAL));
+        private bool isParkingAllowed => (this.vessel.situation != Vessel.Situations.ORBITING && (isSuborbitalParkAllowed || this.vessel.situation != Vessel.Situations.SUB_ORBITAL));
 
         #endregion
     }
