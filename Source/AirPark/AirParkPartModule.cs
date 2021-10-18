@@ -86,10 +86,34 @@ namespace AirPark
             TogglePark();
         }
 
+        [KSPEvent(guiActive = true, guiName = "Parking ON")]
+        public void SetParkingOn_Event()
+        {
+            if (!this.Parked) this.TogglePark();
+        }
+
+        [KSPEvent(guiActive = true, guiName = "Parking OFF")]
+        public void SetParkingOff_Event()
+        {
+            if (this.Parked) this.TogglePark();
+        }
+
         [KSPAction("Toggle Park on/off")]
         public void TogglePart_AG(KSPActionParam param)
         {
             TogglePark();
+        }
+
+        [KSPAction("Set Parking to ON")]
+        public void SetParkingOn_AG(KSPActionParam param)
+        {
+            if (!this.Parked) this.TogglePark();
+        }
+
+        [KSPAction("Set Parking to OFF")]
+        public void SetParkingOff_AG(KSPActionParam param)
+        {
+            if (this.Parked) this.TogglePark();
         }
 
         public void TogglePark()
