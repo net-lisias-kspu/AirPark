@@ -39,6 +39,7 @@ This work is licensed under the [GPL 2.0](https://www.gnu.org/licenses/gpl-2.0.t
 	- You don't impersonate the authors, neither redistribute a derivative that could be misrepresented as theirs.
 	- You credit the author and republish the copyright notices on your works where the code is used.
 	- You relicense (and fully comply) your works using GPL 2.0
+		- Please note that upgrading the license to GPLv3 **IS NOT ALLOWED** for this work, as the original author **DID NOT** added the "or (at your option) any later version" on the license.
 	- You don't mix your work with GPL incompatible works.
 
 See [NOTICE](./NOTICE) for further copyright and trademarks notices.
