@@ -268,9 +268,6 @@ namespace AirPark
         {
             RememberPreviousState();
             setVesselStill();
-
-            vessel.situation = Vessel.Situations.LANDED;
-            vessel.Landed = true;
             Parked = true;
         }
 
@@ -282,6 +279,8 @@ namespace AirPark
             this.vessel.angularVelocity = ZERO;
             this.vessel.geeForce = 0.0;
             this.setVesselPosition();
+            vessel.situation = Vessel.Situations.LANDED;
+            vessel.Landed = true;
         }
         #endregion
 
