@@ -22,6 +22,9 @@ using UnityEngine;
 
 namespace AirPark
 {
+    // State controller for the toobar button
+	public class ParkedState:KSPe.UI.Toolbar.State.Control<bool> { protected ParkedState(bool v):base(v) { }  public static implicit operator ParkedState(bool v) => new ParkedState(v);   public static implicit operator bool(ParkedState s) => s.v; }
+
     public class AirPark : PartModule
     {
 		public static AirPark Instance
@@ -40,6 +43,7 @@ namespace AirPark
 
         [KSPField(isPersistant = true, guiActive = true, guiName = "AirParked")]
         public bool Parked;
+        internal ParkedState ParkedState => this.Parked;
 
     // static KSPFiels are pretty hackish, but it works...
         [KSPField(isPersistant = true, guiActive = true, guiName = "Auto UnPark")]
