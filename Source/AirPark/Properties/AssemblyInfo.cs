@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AirPark /L Unofficial")]
+[assembly: AssemblyTitle("AirPark /L Unleashed")]
 [assembly: AssemblyDescription("Parking vessels in unusual places and situations on KSP")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(AirPark.LegalMamboJambo.Company)]
