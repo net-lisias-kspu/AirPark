@@ -13,7 +13,7 @@
 	or FITNESS FOR A PARTICULAR PURPOSE.
 
 	You should have received a copy of the GNU General Public License 2.0
-	Airpark /LUnleashed . If not, see <https://www.gnu.org/licenses/>.
+	Airpark /L Unleashed . If not, see <https://www.gnu.org/licenses/>.
 
 */
 using UnityEngine;

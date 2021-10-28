@@ -13,7 +13,7 @@
 	or FITNESS FOR A PARTICULAR PURPOSE.
 
 	You should have received a copy of the GNU General Public License 2.0
-	Airpark /LUnleashed . If not, see <https://www.gnu.org/licenses/>.
+	Airpark /L Unleashed . If not, see <https://www.gnu.org/licenses/>.
 
 */
 using System.Collections.Generic;
@@ -95,7 +95,7 @@ namespace AirPark
                 GUI.Window(999666, toolbarRect, ToolbarWindow, "AirPark", HighLogic.Skin.window);
             }
 
-            parkingState.CurrentState = AirParkInstance.ParkedState;
+            button.Status = AirParkInstance.ParkedState;
         }
 
         void ToolbarWindow(int windowID)
@@ -181,7 +181,7 @@ namespace AirPark
             GUI.Label(LineRect(ref line), label, HighLogic.Skin.label);
         }
 
-        private static Toolbar.State parkingState = null;
+        private static Toolbar.State.Control parkingState = null;
         private static Toolbar.Button button = null;
         void AddToolbarButton()
         {
@@ -196,12 +196,12 @@ namespace AirPark
                         )
                     ;
 
-                    parkingState = button.State.Create<ParkedState>(
-                        new Dictionary<Toolbar.State.Control, Toolbar.State.Data> {
+                    parkingState = button.State.Controller.Create<ParkedState>(
+                        new Dictionary<Toolbar.State.Status, Toolbar.State.Data> {
                             { (ParkedState)false, Toolbar.State.Data.Create(UI.icon.button.off_36, UI.icon.button.off_24) }
                             ,{ (ParkedState)true, Toolbar.State.Data.Create(UI.icon.button.on_36, UI.icon.button.on_24) }
-                        })
-                    ;
+                        }
+                    );
 
                     button.Toolbar
                         .Add(Toolbar.Button.ToolbarEvents.Kind.Active,

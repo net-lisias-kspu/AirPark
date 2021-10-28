@@ -13,7 +13,7 @@
 	or FITNESS FOR A PARTICULAR PURPOSE.
 
 	You should have received a copy of the GNU General Public License 2.0
-	Airpark /LUnleashed . If not, see <https://www.gnu.org/licenses/>.
+	Airpark /L Unleashed . If not, see <https://www.gnu.org/licenses/>.
 
 */
 using System;
@@ -23,7 +23,7 @@ using UnityEngine;
 namespace AirPark
 {
     // State controller for the toobar button
-	public class ParkedState:KSPe.UI.Toolbar.State.Control<bool> { protected ParkedState(bool v):base(v) { }  public static implicit operator ParkedState(bool v) => new ParkedState(v);   public static implicit operator bool(ParkedState s) => s.v; }
+	public class ParkedState:KSPe.UI.Toolbar.State.Status<bool> { protected ParkedState(bool v):base(v) { }  public static implicit operator ParkedState(bool v) => new ParkedState(v);   public static implicit operator bool(ParkedState s) => s.v; }
 
     public class AirPark : PartModule
     {
@@ -190,7 +190,7 @@ namespace AirPark
             #region can't Park if we're orbiting (unless parking in suborbital is allowed)
             if (!this.isParkingAllowed)
             {
-                Parked = false;
+                this.Parked = false;
                 if (AirParkToolbar.toolbarGuiEnabled) // Prevents the pesky message from being displayed without the GUI
                     ScreenMessages.PostScreenMessage("Cannot Park While Sub-Orbital or Orbital", 5.0f, ScreenMessageStyle.UPPER_CENTER);
                 return;
