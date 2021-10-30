@@ -1,6 +1,6 @@
 ﻿/*
 	This file is part of Airpark /L Unleashed
-	© 2018-21 Lisias T : http://lisias.net <support@lisias.net>
+	© 2018-2021 Lisias T : http://lisias.net <support@lisias.net>
 	© 2016-2018 Gomker
 	© 2015 Smelly
 
@@ -13,7 +13,7 @@
 	or FITNESS FOR A PARTICULAR PURPOSE.
 
 	You should have received a copy of the GNU General Public License 2.0
-	Airpark /L Unleashed . If not, see <https://www.gnu.org/licenses/>.
+	along with Airpark /L Unleashed . If not, see <https://www.gnu.org/licenses/>.
 
 */
 using System;
